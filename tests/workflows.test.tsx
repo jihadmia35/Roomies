@@ -266,3 +266,93 @@ describe('profile frontend workflows', () => {
     expect(screen.queryByLabelText('ডেমো মেস')).toBeNull();
   });
 });
+
+describe('monthly account explanation', () => {
+  it('shows authoritative shared totals, separate meal/extra costs and preserves totals during search', async () => {
+    const user = userEvent.setup();
+    render(app('accounts'));
+    await screen.findByRole('heading', { name: 'সদস্যদের মাসিক হিসাব' });
+    const overview = screen.getByRole('region', { name: 'মাসের হিসাবের সারসংক্ষেপ' });
+    const rate = within(overview).getByText('প্রতি মিলের রেট').closest('section')!;
+    const extra = within(overview).getByText('জনপ্রতি অতিরিক্ত খরচ').closest('section')!;
+    expect(rate.textContent).toContain('৳46.44');
+    expect(extra.textContent).toContain('৳750.00');
+    expect(extra.textContent).toContain('৳4,500.00 অতিরিক্ত খরচ ÷ 6 জন');
+    expect(overview.textContent).toContain('খাওয়া 255 + ন্যূনতমের বাড়তি 13.4 মিল');
+    expect(overview.textContent).toContain('জমা − মোট খরচ');
+    expect(overview.textContent).toContain('এখনও 1টি মিল ও 1টি বাবুর্চির রেকর্ড অসম্পূর্ণ');
+    const table = screen.getByRole('table');
+    expect(within(table).getByRole('columnheader', { name: 'খাবারের খরচ' })).toBeDefined();
+    expect(within(table).getByRole('columnheader', { name: 'অতিরিক্ত খরচ' })).toBeDefined();
+    expect(within(table).getAllByRole('row')).toHaveLength(7);
+    await user.type(screen.getByLabelText('হিসাবের সদস্য খুঁজুন'), 'রাফি');
+    expect(within(table).getAllByRole('row')).toHaveLength(2);
+    expect(extra.textContent).toContain('৳4,500.00 অতিরিক্ত খরচ ÷ 6 জন');
+    expect(rate.textContent).toContain('৳46.44');
+  });
+  it('displays the real range of allocated extra shares when there is a one-paisa remainder', async () => {
+    const view = await repository.view(manager);
+    await repository.saveRecord(manager, {
+      expectedRevision: view.revision,
+      idempotencyKey: 'extra-remainder',
+      record: {
+        type: 'expense',
+        body: {
+          kind: 'EXTRA',
+          category: 'অন্যান্য',
+          amount: 1,
+          date: '2026-09-30',
+          description: 'পয়সার ভাগশেষ যাচাই',
+          vendor: '',
+        },
+      },
+    });
+    render(app('accounts'));
+    await screen.findByRole('heading', { name: 'সদস্যদের মাসিক হিসাব' });
+    const card = screen.getByText('জনপ্রতি অতিরিক্ত খরচ').closest('section')!;
+    expect(card.textContent).toContain('৳750.00–৳750.01');
+    expect(card.textContent).toContain('৳4,500.01 অতিরিক্ত খরচ ÷ 6 জন');
+    const row = screen.getByRole('row', { name: /আরিফ হাসান/ });
+    expect(within(row).getByText('৳750.01')).toBeDefined();
+    expect(screen.getByText(/জনপ্রতি অতিরিক্ত খরচ উপরে ছোট একটি সীমা/)).toBeDefined();
+  });
+  it('does not display a fictitious meal rate when market expenses have no billable meals', async () => {
+    let view = await repository.view(manager);
+    await repository.updateSettings(manager, {
+      expectedRevision: view.revision,
+      rules: { ...view.rules, minimumEnabled: false },
+    });
+    view = await repository.view(manager);
+    let revision = view.revision;
+    for (let day = 1; day <= 30; day++) {
+      const date = `2026-09-${String(day).padStart(2, '0')}`;
+      const result = await repository.updateDay(manager, {
+        expectedRevision: revision,
+        date,
+        cooks: [],
+        acknowledgeDiscard: false,
+        entries: view.participants.flatMap((p) =>
+          view.rules.slots.map((s) => ({
+            memberId: p.memberId,
+            slotId: s.id,
+            quantity: 0,
+            isHome: false,
+            recorded: true,
+          })),
+        ),
+      });
+      revision = result.revision;
+    }
+    render(app('accounts'));
+    await screen.findByRole('heading', { name: 'সদস্যদের মাসিক হিসাব' });
+    const rate = screen.getByText('প্রতি মিলের রেট').closest('section')!;
+    expect(within(rate).getByText('—')).toBeDefined();
+    expect(screen.getByText(/বাজার খরচ আছে কিন্তু বিলযোগ্য মিল শূন্য/)).toBeDefined();
+    expect(screen.getByRole('link', { name: 'তথ্য সংশোধন করুন' }).getAttribute('href')).toBe(
+      '/meals/daily',
+    );
+    expect(
+      screen.getByRole('region', { name: 'মাসের হিসাবের সারসংক্ষেপ' }).textContent,
+    ).not.toMatch(/NaN|Infinity/);
+  });
+});

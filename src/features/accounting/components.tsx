@@ -5,7 +5,15 @@ import { useDemo } from '@/features/demo/provider';
 import { MonthView, Statement } from '@/domain/models';
 import { Card, Avatar, Balance, Badge, Button, Empty } from '@/components/ui';
 import { meals, money, dateLabel, monthLabel } from '@/lib/format';
-export function AccountsTable({ view, search = '' }: { view: MonthView; search?: string }) {
+export function AccountsTable({
+  view,
+  search = '',
+  showCostBreakdown = false,
+}: {
+  view: MonthView;
+  search?: string;
+  showCostBreakdown?: boolean;
+}) {
   const items = view.statements.filter((s) =>
     view.people.find((p) => p.id === s.memberId)?.name.includes(search),
   );
@@ -18,6 +26,12 @@ export function AccountsTable({ view, search = '' }: { view: MonthView; search?:
             <th className="num">প্রকৃত মিল</th>
             <th className="num">বিলযোগ্য মিল</th>
             <th className="num">মোট জমা</th>
+            {showCostBreakdown && (
+              <>
+                <th className="num">খাবারের খরচ</th>
+                <th className="num">অতিরিক্ত খরচ</th>
+              </>
+            )}
             <th className="num">মোট খরচ</th>
             <th className="num">ব্যালেন্স</th>
             <th />
@@ -45,6 +59,12 @@ export function AccountsTable({ view, search = '' }: { view: MonthView; search?:
                   )}
                 </td>
                 <td className="num">{money(s.deposits)}</td>
+                {showCostBreakdown && (
+                  <>
+                    <td className="num">{money(s.mealCost)}</td>
+                    <td className="num">{money(s.extraCost)}</td>
+                  </>
+                )}
                 <td className="num">{money(s.totalCost)}</td>
                 <td className="num">
                   <Balance value={s.balance} />

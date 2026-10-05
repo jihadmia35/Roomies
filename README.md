@@ -60,6 +60,8 @@ Only **সুবর্ণ মেস** is implemented. There is no mess selector 
 4. In September's settlement dashboard, record a partial payment/refund; verify the remaining amount. Complete all outstanding accounts. September becomes SETTLED and both former managers have only their own member access.
 5. August starts closed with an existing partial refund so settlement exploration does not require closing first.
 
+The **সদস্যদের মাসিক হিসাব** page shows the shared meal rate, allocated per-person extra cost, billable-meal adjustments and total month expenses above a plain-language bill explanation. Its table separates meal cost and extra cost, so each member's total and balance can be understood without opening another page. Member search filters rows while keeping month-wide summary values intact.
+
 Create/edit/delete deposits and expenses, attach a local image receipt, adjust monthly participation, configure slots and rules, view audit before/after records, inspect personal statements, download a CSV or print a statement. Mobile navigation uses the hamburger; large financial and meal tables scroll horizontally with sticky member columns and headers. Search accessible pages via the header or Ctrl/Cmd+K.
 
 ## Source and integration

@@ -3289,3 +3289,124 @@ th {
     gap: 18px;
   }
 }
+
+.accounts-stat-note {
+  font-size: 11px;
+  line-height: 1.8;
+  color: #738278;
+  margin: 0;
+}
+.accounts-stat-grid .stat-value {
+  font-size: clamp(19px, 1.8vw, 26px);
+  overflow-wrap: anywhere;
+}
+.accounts-guide {
+  padding: 24px;
+}
+.accounts-guide-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+.accounts-guide-heading h3 {
+  margin: 0 0 7px;
+}
+.accounts-guide-heading p,
+.accounts-guide-notes p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #748178;
+  margin: 0;
+}
+.accounts-formulas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+  gap: 20px;
+  padding: 0;
+  margin: 0 0 22px;
+}
+.accounts-formulas li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.formula-number {
+  flex-shrink: 0;
+  width: 25px;
+  height: 25px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  background: #ebf5ee;
+  color: #16866b;
+  font-size: 12px;
+  font-weight: 600;
+}
+.accounts-formulas strong {
+  display: block;
+  font-size: 13px;
+  margin: 3px 0 8px;
+}
+.accounts-formulas p {
+  font-size: 12px;
+  line-height: 1.9;
+  margin: 0;
+  color: #68796c;
+}
+.accounts-guide-notes {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  display: grid;
+  gap: 9px;
+}
+.accounts-reconciliation {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #f8faf6;
+  border: 1px solid #eaf0e6;
+  border-radius: 8px;
+  padding: 12px 15px;
+  margin-top: 18px;
+  font-size: 11px;
+  color: #71816f;
+}
+.accounts-reconciliation strong {
+  display: inline-block;
+  margin-left: 7px;
+  color: #314e3b;
+  font-variant-numeric: tabular-nums;
+}
+.accounts-status-note {
+  margin: 14px 0 23px;
+  font-size: 11px;
+  line-height: 1.9;
+  color: #877b5e;
+}
+@media (max-width: 1100px) {
+  .accounts-formulas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .accounts-guide {
+    padding: 18px;
+  }
+  .accounts-formulas {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .accounts-guide-heading {
+    flex-wrap: wrap;
+  }
+  .accounts-reconciliation {
+    flex-direction: column;
+  }
+  .accounts-stat-grid .stat-value {
+    font-size: 21px;
+  }
+}

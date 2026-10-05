@@ -5,6 +5,7 @@ import { MonthView } from '@/domain/models';
 import { HistoryDTO } from '@/data/contracts';
 import { Card, PageHeading, Badge, Empty, Loading, Balance, Alert } from '@/components/ui';
 import { AccountsTable, StatementDetail } from './components';
+import { AccountsOverview } from './accounts-overview';
 import { TreasuryCard } from '@/features/settlements/screen';
 import { useDemo } from '@/features/demo/provider';
 import { meals, money, monthLabel, statusLabel, timestamp } from '@/lib/format';
@@ -39,6 +40,7 @@ export function Accounts({ view, memberId }: { view: MonthView; memberId?: strin
       >
         <Badge>{view.statements.length} জন</Badge>
       </PageHeading>
+      <AccountsOverview view={view} />
       <Card>
         <div className="filter-toolbar">
           <div className="search-field">
@@ -51,7 +53,7 @@ export function Accounts({ view, memberId }: { view: MonthView; memberId?: strin
             />
           </div>
         </div>
-        <AccountsTable view={view} search={search} />
+        <AccountsTable view={view} search={search} showCostBreakdown />
       </Card>
     </>
   );

@@ -6,14 +6,14 @@ Verified locally on October 5, 2026. Financial demo timeline remains September 3
 
 - `npm run typecheck`: passed with strict TypeScript.
 - `npm run lint`: passed without errors or warnings.
-- `npm test`: **52 tests across 4 files passed**.
+- `npm test`: **55 tests across 4 files passed**.
 - `npm run build`: production compilation, type validation, page generation and route optimization passed.
 
 `tests/accounting.test.ts` (17 tests) covers fixed-precision parsing/accumulation, floor minimums, full-month eligibility for midmonth participants, home/cook exclusions, overlap deduplication, disabled features, missing versus recorded zero, calendar lengths, billable denominators, deterministic exact allocations, zero billable meals and empty participation.
 
 `tests/repository.test.ts` (20 tests) covers scoped member and historical reads, unsupported-mess rejection and historical account isolation, unauthorized operations, equal manager permissions and audit attribution, revision conflicts, cook discard acknowledgment, tracking-disabled behavior, idempotency, record edit/delete reconciliation, missing-record close blocking, distinct manager selection, atomic handover, zero new-month finances, closed-month immutability, historical rule snapshots, partial settlements, treasury effects, overpayment/nonpositive/wrong-direction/duplicate rejection, completing all payments and refunds, both POST_MANAGER assignments expiring, and settled-history scope.
 
-`tests/workflows.test.tsx` (7 rendered React integration tests) exercises the actual screens, provider, asynchronous repository and confirmations:
+`tests/workflows.test.tsx` (10 rendered React integration tests) exercises the actual screens, provider, asynchronous repository and confirmations:
 
 1. Save a custom 1.25 lunch, record a missing 0.3 lunch, confirm cook availability and observe new accounting totals.
 2. Change to a member identity, show only personal deposits, clear old records and deny manager settings.
@@ -23,6 +23,10 @@ Verified locally on October 5, 2026. Financial demo timeline remains September 3
 
 6. Upload a local profile picture, inspect its unsaved preview, save, navigate to a statement and remove the photo with confirmation.
 7. Reject an incorrect current password, change the demo password, clear password inputs and switch to a nonparticipating identity's own profile without leaking the previous identity's metadata.
+
+8. Inspect monthly accounts shared totals and meal/extra cost columns; filter by member and verify the month-wide rate and per-person extra share stay unchanged.
+9. Add an extra expense of one paisa and verify the displayed per-person allocation range and the actual member-row share.
+10. Zero all meals with minimum disabled while market expenses remain; verify the invalid-accounting message and an unavailable rate instead of a fictitious number.
 
 `tests/profile.test.ts` (8 tests) covers the single-mess session contract, unsupported-mess rejection, self-only profile reads and writes (including managers), nonparticipant profile access, photo propagation and removal, closed-finance immutability after profile edits, defensive response copies, image type/signature/size validation, profile revision conflicts, current-password verification, confirmation/length/different-password rules, subsequent use of the changed password, identity isolation, omission of credentials from responses/audit and reset behavior.
 
@@ -39,6 +43,14 @@ Using the local development build and available in-app browser:
 - Inspected browser error/warning logs during these profile flows: no application error or warning was captured.
 - Opened the production build's `/profile` and expanded the demo panel: only identities, accounting months and reset were present; no mess switcher.
 - Selected the nonparticipating roster identity, opened their profile through the header, verified the photo control was usable, and completed the in-app reset confirmation to return to the initial manager.
+
+## Updated monthly accounts browser checks
+
+- Opened `/accounts` on the local development server and inspected the new rate (৳46.44), extra share (৳750.00), billable meals (268.4) and total cost (৳16,965.00).
+- Verified the four-step bill explanation and the separate meal-cost/extra-cost columns.
+- Searched for Rafi: the table reduced to one member while the shared per-person extra cost stayed ৳750.00.
+- Tested at 390 × 844: body width was 375 pixels within the viewport, and the wider financial table remained inside its horizontally scrollable container.
+- Captured browser error/warning logs: no application error or warning was reported. Restored the default viewport and cleared the search.
 
 ## Earlier accounting browser checks
 
